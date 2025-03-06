@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Host Page</title>
+</head>
+<body>
+  <h2>Host Page</h2>
+
+  <!-- Embeds the React WebApp served from http://localhost:5173 -->
+  <iframe 
+    src="http://localhost:5173"
+    id="myEmbedWidget"
+    style="width:400px; height:300px; border:1px solid #ccc;"
+  ></iframe>
+
+  <!-- Button to send custom messages (theme, size) -->
+  <button onclick="sendMessageToIframe()">Send Theme Change</button>
+
+  <script>
+    const iframe = document.getElementById("myEmbedWidget");
+
+    // Listen for messages from the iframe
+    window.addEventListener("message", (event) => {
+      // Optionally check event.origin if you only trust certain domains:
+      // if (event.origin !== "http://localhost:5173") return;
+
+      console.log("Message received from iframe:", event.data);
+
+      if (event.data.type === "DATA_READY") {
+        console.log("Data from widget:", event.data.data);
+      }
+    });
+
+    function sendMessageToIframe() {
+      // Post a message to the iframe with new theme and size
+      iframe.contentWindow.postMessage(
+        {
+          type: "SET_THEME",
+          theme: "dark",
+          width: 500,
+          height: 300
+        },
+        "http://localhost:5173" // The iframe's origin
+      );
+    }
+  </script>
+</body>
+</html>
